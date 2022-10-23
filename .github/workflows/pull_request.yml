@@ -72,7 +72,7 @@ jobs:
       - name: install ninja
         run: sudo apt install ninja-build
       - name: install gtest
-        run: sudo apt-get install libgtest-dev
+        run: sudo apt-get install libgtest-dev && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make
       - name: version
         run: clang-format --version && cmake --version && ninja --version
       - name: cmake
