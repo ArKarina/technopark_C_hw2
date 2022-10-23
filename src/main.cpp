@@ -31,10 +31,10 @@
 #include "matrix.h"
 #include "array.h"
 
-int main(void)
-{
-	Matrix<int> m1 = {{5, 2, 3}, {4, 7, 6}, {7, 8, 9}};
-	std::cout << m1;
-	
-	return 0;
+int main(void) {
+  Matrix < int > m1 = {{{5, 2, 3}, {4, 7, 6}, {7, 8, 9}};
+
+  std::cout << m1;
+
+  return 0;
 }
