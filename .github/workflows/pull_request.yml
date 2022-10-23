@@ -24,7 +24,7 @@ jobs:
       - name: version
         run: clang-format --version && cmake --version
       - name: cmake
-        run: cmake -B${{github.workspace}}/build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+        run: cmake -Bbuild -GNinja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
       - name: tidy
         run: clang-tidy -p build src/*.cpp include/*.h
   build:
@@ -38,9 +38,9 @@ jobs:
       - name: version
         run: clang-format --version && cmake --version && ninja --version
       - name: cmake
-        run: cmake -B${{github.workspace}}/build -GNinja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+        run: cmake -Bbuild -GNinja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
       - name: build
-        run: ninja -C${{github.workspace}}/build
+        run: ninja -Cbuild
   test:
     runs-on: ubuntu-latest
     needs: build
@@ -52,11 +52,11 @@ jobs:
       - name: version
         run: clang-format --version && cmake --version && ninja --version
       - name: cmake
-        run: cmake -B${{github.workspace}}/build -GNinja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+        run: cmake -Bbuild -GNinja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
       - name: build
-        run: ninja -C${{github.workspace}}/build
+        run: ninja -Cbuild
       - name: test run
-        run: ${{github.workspace}}/build/test/run_tests
+        run: build/test/run_tests
   memtests:
     runs-on: ubuntu-latest
     needs: build
@@ -68,8 +68,8 @@ jobs:
       - name: version
         run: clang-format --version && cmake --version && ninja --version
       - name: cmake
-        run: cmake -B${{github.workspace}}/build -GNinja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+        run: cmake -Bbuild -GNinja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
       - name: build
-        run: ninja -C${{github.workspace}}/build
+        run: ninja -Cbuild
       - name: test run
-        run: valgrind ${{github.workspace}}/build/test/run_tests -- --exit=true
+        run: valgrind build/test/run_tests -- --exit=true
