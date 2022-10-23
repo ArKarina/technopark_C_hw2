@@ -24,7 +24,7 @@ jobs:
       - name: version
         run: clang-format --version && cmake --version
       - name: cmake
-        run: cmake -Bbuild -GNinja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+        run: cmake -Bbuild -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
       - name: tidy
         run: clang-tidy -p build src/*.cpp include/*.h
   build:
