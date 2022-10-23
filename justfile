@@ -2,10 +2,10 @@ run: build
   ./build/app
 
 format:
-  clang-format --dry-run --Werror src/*.cpp
+  clang-format --dry-run --Werror src/*.cpp include/*.h
 
 tidy: cmake
-  clang-tidy -p build src/*.cpp
+  clang-tidy -p build src/*.cpp include/*.h
 
 build: cmake
   ninja -Cbuild
