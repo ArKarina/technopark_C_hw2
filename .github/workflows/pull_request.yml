@@ -21,8 +21,6 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3 
-      - name: install
-        run: sudo apt-get install libgtest-dev
       - name: version
         run: clang-format --version && cmake --version
       - name: cmake
@@ -37,8 +35,6 @@ jobs:
         uses: actions/checkout@v3 
       - name: install ninja
         run: sudo apt install ninja-build
-      - name: install gtest
-        run: sudo apt-get install libgtest-dev
       - name: version
         run: clang-format --version && cmake --version && ninja --version
       - name: cmake
@@ -62,7 +58,8 @@ jobs:
       - name: build
         run: ninja -C${{github.workspace}}/build
       - name: test run
-        run: ${{github.workspace}}/build/test/run_tests
+        run: ${{github.workspace}}/build/test/MatrixCalculator_tests
+
   memtests:
     runs-on: ubuntu-latest
     needs: build
@@ -80,4 +77,4 @@ jobs:
       - name: build
         run: ninja -C${{github.workspace}}/build
       - name: test run
-        run: valgrind ${{github.workspace}}/build/test/run_tests -- --exit=true
+        run: valgrind ${{github.workspace}}/build/test/MatrixCalculator_tests -- --exit=true
