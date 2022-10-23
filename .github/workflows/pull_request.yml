@@ -35,8 +35,9 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3 
-      - name: install
+      - name: install ninja
         run: sudo apt install ninja-build
+      - name: install gtest
         run: sudo apt-get install libgtest-dev
       - name: version
         run: clang-format --version && cmake --version && ninja --version
@@ -50,8 +51,10 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3 
-      - name: install
+      - name: install ninja
         run: sudo apt install ninja-build
+      - name: install gtest
+        run: sudo apt-get install libgtest-dev
       - name: version
         run: clang-format --version && cmake --version && ninja --version
       - name: cmake
@@ -66,8 +69,10 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3 
-      - name: install
-        run: sudo apt install ninja-build valgrind
+      - name: install ninja
+        run: sudo apt install ninja-build
+      - name: install gtest
+        run: sudo apt-get install libgtest-dev
       - name: version
         run: clang-format --version && cmake --version && ninja --version
       - name: cmake
