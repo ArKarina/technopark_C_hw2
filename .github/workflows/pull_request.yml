@@ -59,22 +59,3 @@ jobs:
         run: ninja -C${{github.workspace}}/build
       - name: test run
         run: ${{github.workspace}}/build/test/MatrixCalculator_tests
-
-  memtests:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3 
-      - name: install ninja
-        run: sudo apt install ninja-build
-      - name: install gtest
-        run: sudo apt-get install libgtest-dev && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make
-      - name: version
-        run: clang-format --version && cmake --version && ninja --version
-      - name: cmake
-        run: cmake -B${{github.workspace}}/build -GNinja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-      - name: build
-        run: ninja -C${{github.workspace}}/build
-      - name: test run
-        run: valgrind ${{github.workspace}}/build/test/MatrixCalculator_tests
