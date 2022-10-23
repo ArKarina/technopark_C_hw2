@@ -21,10 +21,6 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3 
-      - name: version
-        run: clang-format --version && cmake --version
-      - name: cmake
-        run: cmake -B${{github.workspace}}/build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
       - name: tidy
         run: clang-tidy -p build src/*.cpp include/*.h
   build:
@@ -77,4 +73,4 @@ jobs:
       - name: build
         run: ninja -C${{github.workspace}}/build
       - name: test run
-        run: valgrind ${{github.workspace}}/build/test/MatrixCalculator_tests -- --exit=true
+        run: valgrind ${{github.workspace}}/build/test/MatrixCalculator_tests
