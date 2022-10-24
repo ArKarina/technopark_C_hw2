@@ -62,8 +62,9 @@ public:
       realSize = 0;
       arr = new Type[n];
     }
+    realSize = 0;
 
-    for (size_t i = 0; i < n; i++)
+    for (size_t i = 0; i < array.realSize; i++)
       arr[realSize++] = array.arr[i];
 
     return *this;
@@ -114,6 +115,46 @@ public:
   void add(Type elem) { arr[realSize++] = elem; }
 
   size_t size() const { return realSize; }
+
+  Array<Type> slice(int start = 0, int stop = 0, int step = 1){
+    if (start < 0)
+      start += realSize;
+    
+    if (start > realSize - 1)
+    {
+      std::cout << "Invalid start value" << std::endl;
+      return *this;
+    }
+
+    if (stop < 0)
+      stop += realSize;
+    else if (stop == 0)
+      stop = realSize;
+
+    if (stop > realSize)
+    {
+      std::cout << "Invalid stop value" << std::endl;
+      return *this;
+    }
+
+    if (stop < start){
+      if (step > 0)
+        std::cout << "Invalid slice values" << std::endl;
+                
+      std::swap(start, stop);
+      step *= -1;
+    }
+
+    Array<Type> res(n);
+    if (step >= 0)
+      for (size_t i = start; i < stop; i += step)
+        res.add(arr[i]);
+    else
+      for (int i = stop - 1; i >= start; i += step)
+        res.add(arr[i]);
+
+    return res;
+  }
 
 private:
   Type *arr;

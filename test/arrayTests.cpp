@@ -80,3 +80,37 @@ TEST(ArrayTest, MultiplyNumber)
     for (size_t i = 0; i < res.size(); i++)
         ASSERT_EQ(a1[i], res[i]);
 }
+
+TEST(ArrayTest, Slice) 
+{
+    Array<int> a1 = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    Array<int> res = {3, 5, 7};
+    Array<int> a2 = a1.slice(2, 8, 2);
+
+    for (size_t i = 0; i < res.size(); i++)
+        ASSERT_EQ(a2[i], res[i]);
+
+    res = {7, 8, 9, 10};
+    a2 = a1.slice(-4);
+
+    for (size_t i = 0; i < res.size(); i++)
+        ASSERT_EQ(a2[i], res[i]);
+
+    res = {4, 5, 6, 7};
+    a2 = a1.slice(3, -3);
+
+    for (size_t i = 0; i < res.size(); i++)
+        ASSERT_EQ(a2[i], res[i]);
+    
+    res = {1, 2, 3, 4};
+    a2 = a1.slice(0, -6);
+
+    for (size_t i = 0; i < res.size(); i++)
+        ASSERT_EQ(a2[i], res[i]);
+    
+    res = {10, 8, 6, 4, 2};
+    a2 = a1.slice(0, 0, -2);
+
+    for (size_t i = 0; i < res.size(); i++)
+        ASSERT_EQ(a2[i], res[i]);
+}
