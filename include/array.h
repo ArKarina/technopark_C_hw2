@@ -116,12 +116,11 @@ public:
 
   size_t size() const { return realSize; }
 
-  Array<Type> slice(int start = 0, int stop = 0, int step = 1){
+  Array<Type> slice(int start = 0, int stop = 0, int step = 1) {
     if (start < 0)
       start += realSize;
-    
-    if (start > realSize - 1)
-    {
+
+    if (start > realSize - 1) {
       std::cout << "Invalid start value" << std::endl;
       return *this;
     }
@@ -131,16 +130,15 @@ public:
     else if (stop == 0)
       stop = realSize;
 
-    if (stop > realSize)
-    {
+    if (stop > realSize) {
       std::cout << "Invalid stop value" << std::endl;
       return *this;
     }
 
-    if (stop < start){
+    if (stop < start) {
       if (step > 0)
         std::cout << "Invalid slice values" << std::endl;
-                
+
       std::swap(start, stop);
       step *= -1;
     }
