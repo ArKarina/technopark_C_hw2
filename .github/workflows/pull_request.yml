@@ -41,21 +41,21 @@ jobs:
         run: cmake -B${{github.workspace}}/build -GNinja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
       - name: build
         run: ninja -C${{github.workspace}}/build
+      - name: save build
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: build
   test:
     runs-on: ubuntu-latest
     needs: build
     steps:
       - name: checkout
         uses: actions/checkout@v3 
-      - name: install ninja
-        run: sudo apt install ninja-build
-      - name: install gtest
-        run: sudo apt-get install libgtest-dev
-      - name: version
-        run: clang-format --version && cmake --version && ninja --version
-      - name: cmake
-        run: cmake -B${{github.workspace}}/build -GNinja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-      - name: build
-        run: ninja -C${{github.workspace}}/build
+      - name: get build
+        uses: actions/download-artifact@v2
+        with:
+          name: build
+          path: build
       - name: test run
-        run: ${{github.workspace}}/build/test/MatrixCalculator_tests
+        run: chmod +x build/test && ${{github.workspace}}/build/test/MatrixCalculator_tests

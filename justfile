@@ -20,3 +20,4 @@ tests:
   cd build && cd test && ./MatrixCalculator_tests
 clean:
   rm -r build
+  
