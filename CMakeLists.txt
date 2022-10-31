@@ -2,7 +2,7 @@
 project(MatrixCalculator)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
-file(GLOB SRC ${PROJECT_SOURCE_DIR}/src/*.cpp)
+file(GLOB SRC ${PROJECT_SOURCE_DIR}/src/main.cpp)
 
 add_library(${PROJECT_NAME} STATIC ${SRC})
 

@@ -17,7 +17,7 @@ app:
   cd build && ./app
 
 tests:
-  cd build && cd test && ./MatrixCalculator_tests
+  cd build && cd test && ./MatrixCalculatorTests
 clean:
   rm -r build
   

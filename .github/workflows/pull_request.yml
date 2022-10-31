@@ -58,4 +58,4 @@ jobs:
           name: build
           path: build
       - name: test run
-        run: chmod +x build/test && ${{github.workspace}}/build/test/MatrixCalculator_tests
+        run: chmod +x build/test && ${{github.workspace}}/build/test/MatrixCalculatorTests
