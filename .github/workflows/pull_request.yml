@@ -36,11 +36,11 @@ jobs:
       - name: install ninja
         run: sudo apt install ninja-build
       - name: version
-        run: clang-format --version && cmake --version && ninja --version
+        run: cmake --version && ninja --version
       - name: cmake
-        run: cmake -B${{github.workspace}}/build -GNinja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+        run: cmake -Bbuild -GNinja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
       - name: build
-        run: ninja -C${{github.workspace}}/build
+        run: ninja -Cbuild
       - name: save build
         uses: actions/upload-artifact@v2
         with:
@@ -58,4 +58,4 @@ jobs:
           name: build
           path: build
       - name: test run
-        run: chmod +x build/test && ${{github.workspace}}/build/test/MatrixCalculatorTests
+        run: chmod +x build/test/MatrixCalculatorTests && ./build/test/MatrixCalculatorTests
