@@ -1,8 +1,8 @@
 #ifndef ARRAY_H
 #define ARRAY_H
 
-#include <iostream>
 #include <cassert>
+#include <iostream>
 
 #include "errors.h"
 
@@ -15,6 +15,7 @@ public:
     for (size_t i = 0; i < capacity; i++)
       arr[i] = 0;
   }
+
   Array(size_t _capacity) : capacity(_capacity), real_size(0) {
     arr = new Type[capacity];
 
@@ -22,28 +23,32 @@ public:
       arr[i] = 0;
   }
 
-  Array(Type *array, size_t capacity) : capacity(capacity), real_size(capacity) {
+  Array(Type *array, size_t capacity)
+      : capacity(capacity), real_size(capacity) {
     arr = new Type[capacity];
 
     for (size_t i = 0; i < capacity; i++)
       arr[i] = array[i];
   }
 
-  Array(std::initializer_list<Type> list) : capacity(list.size()), real_size(0) {
+  Array(std::initializer_list<Type> list)
+      : capacity(list.size()), real_size(0) {
     arr = new Type[capacity];
 
     for (auto &value : list)
       arr[real_size++] = value;
   }
 
-  Array(const Array<Type> &array) : capacity(array.capacity), real_size(array.real_size) {
+  Array(const Array<Type> &array)
+      : capacity(array.capacity), real_size(array.real_size) {
     arr = new Type[capacity];
 
     for (size_t i = 0; i < capacity; i++)
       arr[i] = array.arr[i];
   }
 
-  Array(Array<Type> &&array) : capacity(array.capacity), real_size(array.real_size) {
+  Array(Array<Type> &&array)
+      : capacity(array.capacity), real_size(array.real_size) {
     arr = array.arr;
     array.arr = nullptr;
     array.capacity = 0;
@@ -55,14 +60,15 @@ public:
   inline Type &operator()(const size_t i) const {
     if (i < 0 || i >= real_size || !arr)
       throw(IndexError("Invalid index", __FILE__, __func__, __LINE__));
-    
-    return arr[i]; 
+
+    return arr[i];
   }
-  inline Type &operator[](const size_t i) const { 
+
+  inline Type &operator[](const size_t i) const {
     if (i < 0 || i >= real_size || !arr)
       throw(IndexError("Invalid index", __FILE__, __func__, __LINE__));
 
-    return arr[i]; 
+    return arr[i];
   }
 
   Array<Type> &operator=(const Array<Type> &array) {
@@ -93,7 +99,7 @@ public:
   Array<Type> &operator+=(const Array<Type> &array) {
     if (array.size() != real_size)
       throw(SizeError("Invalid size", __FILE__, __func__, __LINE__));
-    
+
     for (size_t i = 0; i < real_size; i++)
       arr[i] += array.arr[i];
 
@@ -110,7 +116,7 @@ public:
   Array<Type> &operator-=(const Array<Type> &array) {
     if (array.size() != real_size)
       throw(SizeError("Invalid size", __FILE__, __func__, __LINE__));
-    
+
     for (size_t i = 0; i < real_size; i++)
       arr[i] -= array.arr[i];
 
@@ -138,7 +144,7 @@ public:
     if (real_size >= capacity || !arr)
       throw(IndexError("Invalid index", __FILE__, __func__, __LINE__));
 
-    arr[real_size++] = elem; 
+    arr[real_size++] = elem;
   }
 
   size_t size() const { return real_size; }

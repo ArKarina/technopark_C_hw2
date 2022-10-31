@@ -5,8 +5,8 @@
 #include <cmath>
 #include <iostream>
 
-#include "errors.h"
 #include "array.h"
+#include "errors.h"
 
 template <typename Type, size_t rows = 1, size_t cols = 1>
 class Matrix {
@@ -117,7 +117,7 @@ public:
   }
 
   Matrix<Type> &operator+=(const Matrix<Type> &matrix) {
-    if(m != matrix.sizeM() || n != matrix.sizeN())
+    if (m != matrix.sizeM() || n != matrix.sizeN())
       throw(SizeError("Different sizes", __FILE__, __func__, __LINE__));
 
     for (size_t i = 0; i < m; i++)
@@ -154,7 +154,7 @@ public:
   }
 
   Matrix<Type> &operator-=(const Matrix<Type> &matrix) {
-    if(m != matrix.sizeM() || n != matrix.sizeN())
+    if (m != matrix.sizeM() || n != matrix.sizeN())
       throw(SizeError("Different sizes", __FILE__, __func__, __LINE__));
 
     for (size_t i = 0; i < m; i++)
@@ -191,7 +191,7 @@ public:
   }
 
   Matrix<Type> &operator*=(const Matrix<Type> &matrix) {
-    if(n != matrix.sizeM())
+    if (n != matrix.sizeM())
       throw(SizeError("Invalid sizes", __FILE__, __func__, __LINE__));
 
     Matrix res(m, matrix.n);
@@ -204,7 +204,7 @@ public:
   }
 
   Array<Type> operator*(const Array<Type> &array) {
-    if(n != array.size())
+    if (n != array.size())
       throw(SizeError("Invalid sizes", __FILE__, __func__, __LINE__));
 
     Array<Type> res(m);
@@ -239,9 +239,7 @@ public:
   }
 
   Array<Type> getRow(size_t const index) {
-    Array<Type> array(n);
-    for (int j = 0; j < n; j++)
-      array.add(arr[index][j]); //У тебя ведь есть соответствующий конструктор в Array. Почему бы не использовать его?
+    Array<Type> array(arr[index], n);
 
     return array;
   }
@@ -268,9 +266,9 @@ public:
       throw(SizeError("Different sizes", __FILE__, __func__, __LINE__));
 
     Matrix<Type> res(n, n);
-    Matrix<Type> subArray(n - 1, n - 1);
+    Matrix<Type> subMatrix(n - 1, n - 1);
 
-    for (size_t i = 0; i < n; i++)       //3 фора очень сложно читать
+    for (size_t i = 0; i < n; i++)
       for (size_t j = 0; j < n; j++) {
         int p = 0;
         for (size_t x = 0; x < n; x++) {
@@ -283,19 +281,21 @@ public:
             if (y == j)
               continue;
 
-            subArray[p][q] = arr[x][y];
+            subMatrix[p][q] = arr[x][y]; //получение новой матрицы без i-той
+                                         //строки и j-го столбца
             q++;
           }
           p++;
         }
-        res[i][j] = pow(-1, i + j) * subArray.getDeterminant();
+        res[i][j] = pow(-1, i + j) * subMatrix.getDeterminant();
       }
 
     return res;
   }
 
   Type getDeterminant() {
-    assert(sizeN() == sizeM());
+    if (sizeN() != sizeM())
+      throw(SizeError("Different sizes", __FILE__, __func__, __LINE__));
 
     if (n == 0)
       return 1;
@@ -308,7 +308,7 @@ public:
 
     Type res = 0;
     int sign = 1, p;
-    for (size_t i = 0; i < n; i++) { //3 фора очень сложно читать
+    for (size_t i = 0; i < n; i++) {
       Matrix<Type> subMatrix(n - 1, n - 1);
 
       for (size_t j = 1; j < n; j++) {
@@ -316,7 +316,8 @@ public:
 
         for (size_t k = 0; k < n; k++)
           if (k != i) {
-            subMatrix[j - 1][p] = arr[j][k];
+            subMatrix[j - 1][p] = arr[j][k]; //получение матрицы, которая не
+                                             //находится в строке и столбце i
             p++;
           }
       }
@@ -368,7 +369,8 @@ private:
 };
 
 template <typename Type, size_t rows = 0, size_t cols = 0>
-std::ostream &operator<<(std::ostream &os, const Matrix<Type, rows, cols> &matrix) {
+std::ostream &operator<<(std::ostream &os,
+                         const Matrix<Type, rows, cols> &matrix) {
   for (size_t i = 0; i < matrix.sizeM(); i++) {
     for (size_t j = 0; j < matrix.sizeN(); j++)
       os << matrix[i][j] << " ";

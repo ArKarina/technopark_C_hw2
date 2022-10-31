@@ -9,10 +9,5 @@ int main(void) {
 
   std::cout << m1;
 
-  Array<int> a1 = {1, 2, 3, 4, 5, 6, 7};
-  Array<int> a2 = a1.slice(20, 4);
-  std::cout << a2;
-
-
   return 0;
 }
