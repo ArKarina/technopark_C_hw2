@@ -5,11 +5,13 @@
 #include <cmath>
 #include <iostream>
 
+#include "errors.h"
 #include "array.h"
 
-template <typename Type, size_t mm = 1, size_t nn = 1> class Matrix {
+template <typename Type, size_t rows = 1, size_t cols = 1>
+class Matrix {
 public:
-  Matrix() : m(mm), n(nn) {
+  Matrix() : m(rows), n(cols) {
     allocate();
 
     for (size_t i = 0; i < m; i++)
@@ -50,7 +52,7 @@ public:
       : m(list.size()), n(list.begin()->size()) {
     allocate();
 
-    int i = 0;
+    size_t i = 0;
     for (const Array<Type> &array : list) {
       for (size_t j = 0; j < array.size(); j++)
         arr[i][j] = array[j];
@@ -115,6 +117,9 @@ public:
   }
 
   Matrix<Type> &operator+=(const Matrix<Type> &matrix) {
+    if(m != matrix.sizeM() || n != matrix.sizeN())
+      throw(SizeError("Different sizes", __FILE__, __func__, __LINE__));
+
     for (size_t i = 0; i < m; i++)
       for (size_t j = 0; j < n; j++)
         arr[i][j] += matrix.arr[i][j];
@@ -122,8 +127,13 @@ public:
     return *this;
   }
 
-  Matrix<Type> &addArray(const Array<Type> &array, bool byColumn = false) {
-    if (byColumn)
+  Matrix<Type> &addArray(const Array<Type> &array, bool by_column = false) {
+    if (by_column && m != array.size())
+      throw(SizeError("Different sizes", __FILE__, __func__, __LINE__));
+    else if (!by_column && n != array.size())
+      throw(SizeError("Different sizes", __FILE__, __func__, __LINE__));
+
+    if (by_column)
       for (size_t i = 0; i < m; i++)
         for (size_t j = 0; j < n; j++)
           arr[i][j] += array[i];
@@ -142,7 +152,11 @@ public:
 
     return *this;
   }
+
   Matrix<Type> &operator-=(const Matrix<Type> &matrix) {
+    if(m != matrix.sizeM() || n != matrix.sizeN())
+      throw(SizeError("Different sizes", __FILE__, __func__, __LINE__));
+
     for (size_t i = 0; i < m; i++)
       for (size_t j = 0; j < n; j++)
         arr[i][j] -= matrix.arr[i][j];
@@ -150,8 +164,13 @@ public:
     return *this;
   }
 
-  Matrix<Type> &subArray(const Array<Type> &array, bool byColumn = false) {
-    if (byColumn)
+  Matrix<Type> &subArray(const Array<Type> &array, bool by_column = false) {
+    if (by_column && m != array.size())
+      throw(SizeError("Different sizes", __FILE__, __func__, __LINE__));
+    else if (!by_column && n != array.size())
+      throw(SizeError("Different sizes", __FILE__, __func__, __LINE__));
+
+    if (by_column)
       for (size_t i = 0; i < m; i++)
         for (size_t j = 0; j < n; j++)
           arr[i][j] -= array[i];
@@ -172,19 +191,21 @@ public:
   }
 
   Matrix<Type> &operator*=(const Matrix<Type> &matrix) {
-    assert(n == matrix.m);
+    if(n != matrix.sizeM())
+      throw(SizeError("Invalid sizes", __FILE__, __func__, __LINE__));
 
     Matrix res(m, matrix.n);
     for (size_t i = 0; i < res.m; i++)
       for (size_t j = 0; j < res.n; j++)
         for (size_t k = 0; k < n; k++)
-          res.arr[i][j] += arr[i][k] * matrix.arr[k][j];
+          res.arr[i][j] += (arr[i][k] * matrix.arr[k][j]);
 
     return (*this = res);
   }
 
   Array<Type> operator*(const Array<Type> &array) {
-    assert(n == array.size());
+    if(n != array.size())
+      throw(SizeError("Invalid sizes", __FILE__, __func__, __LINE__));
 
     Array<Type> res(m);
     Type tmp;
@@ -209,24 +230,23 @@ public:
   }
 
   Array<Type> getDiagonal() {
-    Array<Type> array(n);
-    for (int i = 0; i < m; i++)
-      for (int j = 0; j < n; j++)
-        if (i == j)
-          array.add(arr[i][j]);
+    size_t min_dim = std::min(n, m);
+    Array<Type> array(min_dim);
+    for (size_t i = 0; i < min_dim; i++)
+      array.add(arr[i][i]);
 
     return array;
   }
 
-  Array<Type> getRow(size_t index) {
+  Array<Type> getRow(size_t const index) {
     Array<Type> array(n);
     for (int j = 0; j < n; j++)
-      array.add(arr[index][j]);
+      array.add(arr[index][j]); //У тебя ведь есть соответствующий конструктор в Array. Почему бы не использовать его?
 
     return array;
   }
 
-  Array<Type> getColumn(size_t index) {
+  Array<Type> getColumn(size_t const index) {
     Array<Type> array(m);
     for (int i = 0; i < m; i++)
       array.add(arr[i][index]);
@@ -244,12 +264,13 @@ public:
   }
 
   Matrix<Type> getCofactor() {
-    assert(sizeN() == sizeM());
+    if (sizeN() != sizeM())
+      throw(SizeError("Different sizes", __FILE__, __func__, __LINE__));
 
     Matrix<Type> res(n, n);
     Matrix<Type> subArray(n - 1, n - 1);
 
-    for (size_t i = 0; i < n; i++)
+    for (size_t i = 0; i < n; i++)       //3 фора очень сложно читать
       for (size_t j = 0; j < n; j++) {
         int p = 0;
         for (size_t x = 0; x < n; x++) {
@@ -287,15 +308,17 @@ public:
 
     Type res = 0;
     int sign = 1, p;
-    for (size_t i = 0; i < n; i++) {
+    for (size_t i = 0; i < n; i++) { //3 фора очень сложно читать
       Matrix<Type> subMatrix(n - 1, n - 1);
 
       for (size_t j = 1; j < n; j++) {
         p = 0;
 
         for (size_t k = 0; k < n; k++)
-          if (k != i)
-            subMatrix[j - 1][p++] = arr[j][k];
+          if (k != i) {
+            subMatrix[j - 1][p] = arr[j][k];
+            p++;
+          }
       }
 
       res = res + sign * arr[0][i] * subMatrix.getDeterminant();
@@ -309,11 +332,11 @@ public:
     Matrix<double> res(m, n);
     Type D = getDeterminant();
     if (D == 0) {
-      std::cout << "Determinant = 0.";
+      throw(DataError("Determinant = 0", __FILE__, __func__, __LINE__));
       return res;
     }
 
-    double dd = 1.0 / D;
+    double inverse_D = 1.0 / D;
 
     for (size_t i = 0; i < m; i++)
       for (size_t j = 0; j < n; j++)
@@ -323,7 +346,7 @@ public:
 
     for (size_t i = 0; i < m; i++)
       for (size_t j = 0; j < n; j++)
-        res[i][j] *= dd;
+        res[i][j] *= inverse_D;
 
     return res;
   }
@@ -344,8 +367,8 @@ private:
   }
 };
 
-template <typename Type, size_t mm = 0, size_t nn = 0>
-std::ostream &operator<<(std::ostream &os, const Matrix<Type, mm, nn> &matrix) {
+template <typename Type, size_t rows = 0, size_t cols = 0>
+std::ostream &operator<<(std::ostream &os, const Matrix<Type, rows, cols> &matrix) {
   for (size_t i = 0; i < matrix.sizeM(); i++) {
     for (size_t j = 0; j < matrix.sizeN(); j++)
       os << matrix[i][j] << " ";
